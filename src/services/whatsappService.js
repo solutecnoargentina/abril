@@ -9,8 +9,11 @@ const { decideReply } = require('./ruleEngine');
 
 function detectChromiumPath() {
   const candidates = [
+    '/usr/bin/google-chrome-stable',
+    '/usr/bin/google-chrome',
     '/usr/bin/chromium-browser',
     '/usr/bin/chromium',
+    '/usr/bin/chrome',
     '/snap/bin/chromium'
   ];
   for (const item of candidates) {
@@ -28,8 +31,10 @@ class WhatsAppService {
     this.clientInfo = null;
     this.bootUnix = Math.floor(Date.now() / 1000);
     this.seenMessageIds = new Set();
-    this.seenMessageQueue = [];
+    this.seenMessageQueue = []; 
     this.maxSeenMessages = 2000;
+    this.restartTimer = null;
+    this.isRestarting = false;
   }
 
   getState() {
@@ -42,6 +47,14 @@ class WhatsAppService {
 
   getQrDataUrl() {
     return this.currentQrDataUrl;
+  }
+
+  async clearSessionState() {
+    try {
+      fs.rmSync(paths.SESSION_DIR, { recursive: true, force: true });
+    } catch (err) {
+      console.warn('No se pudo limpiar la sesión de WhatsApp:', err.message);
+    }
   }
 
   rememberMessage(messageId) {
@@ -97,7 +110,9 @@ class WhatsAppService {
           '--disable-dev-shm-usage',
           '--disable-gpu'
         ]
-      }
+      },
+      takeoverOnConflict: true,
+      takeoverTimeoutMs: 15000
     });
 
     this.client.on('qr', async (qr) => {
@@ -110,6 +125,13 @@ class WhatsAppService {
 
     this.client.on('authenticated', () => {
       console.log('WhatsApp autenticado.');
+    });
+
+    this.client.on('auth_failure', async (message) => {
+      console.error('WhatsApp auth failure:', message);
+      this.isReady = false;
+      this.clientInfo = 'AUTH_FAILURE';
+      await this.restart({ resetSession: true });
     });
 
     this.client.on('ready', async () => {
@@ -128,6 +150,13 @@ class WhatsAppService {
       console.log('WhatsApp desconectado:', reason);
       this.isReady = false;
       this.clientInfo = String(reason || 'DISCONNECTED');
+
+      const normalized = String(reason || '').toUpperCase();
+      if (normalized.includes('LOGOUT') || normalized.includes('UNPAIRED') || normalized.includes('CONFLICT')) {
+        this.restart({ resetSession: true }).catch(err => {
+          console.error('Error reiniciando WhatsApp tras desconexión:', err.message);
+        });
+      }
     });
 
     this.client.on('message', async (msg) => {
@@ -201,12 +230,21 @@ class WhatsAppService {
     await this.client.initialize();
   }
 
-  async restart() {
+  async restart(options = {}) {
+    const { resetSession = false } = options;
+
+    if (this.isRestarting) return;
+    this.isRestarting = true;
+
     try {
       if (this.client) {
         await this.client.destroy();
       }
     } catch {}
+
+    if (resetSession) {
+      await this.clearSessionState();
+    }
 
     this.client = null;
     this.isReady = false;
@@ -214,11 +252,18 @@ class WhatsAppService {
     this.currentQrText = null;
     this.currentQrDataUrl = null;
 
-    setTimeout(() => {
+    clearTimeout(this.restartTimer);
+    this.restartTimer = setTimeout(() => {
       this.initialize().catch(err => {
         console.error('Error re-inicializando WhatsApp:', err.message);
+      }).finally(() => {
+        this.isRestarting = false;
       });
     }, 2000);
+  }
+
+  async resetSession() {
+    await this.restart({ resetSession: true });
   }
 }
 
