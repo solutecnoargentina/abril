@@ -1,1230 +1,235 @@
 <!doctype html>
-<html lang="es">
+<html lang="es-AR">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0b1220">
+  <meta name="theme-color" content="#0B63FF">
   <meta name="description" content="Panel premium de control para el bot de WhatsApp de Solutecno Argentina.">
   <title>Solutecno Argentina | Bot Premium</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="https://solutecno.com.ar/favicon.ico">
   <style>
-    :root {
-      --bg: #07111f;
-      --bg-2: #0d1728;
-      --surface: rgba(12, 18, 34, 0.78);
-      --surface-strong: rgba(15, 23, 42, 0.95);
-      --line: rgba(255, 255, 255, 0.08);
-      --text: #eef4ff;
-      --muted: #9aa9c2;
-      --gold: #d8a94a;
-      --gold-2: #f1cf7a;
-      --green: #22c55e;
-      --red: #ef4444;
-      --blue: #38bdf8;
-      --shadow: 0 24px 90px rgba(0, 0, 0, 0.42);
-    }
-
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      font-family: "Manrope", system-ui, sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at 10% 10%, rgba(216, 169, 74, 0.18), transparent 28%),
-        radial-gradient(circle at 90% 12%, rgba(56, 189, 248, 0.15), transparent 26%),
-        radial-gradient(circle at 50% 95%, rgba(34, 197, 94, 0.1), transparent 24%),
-        linear-gradient(160deg, var(--bg), var(--bg-2) 70%);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    body::before,
-    body::after {
-      content: "";
-      position: fixed;
-      inset: auto;
-      width: 340px;
-      height: 340px;
-      border-radius: 50%;
-      filter: blur(50px);
-      opacity: 0.25;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    body::before {
-      top: -110px;
-      right: -90px;
-      background: radial-gradient(circle, rgba(216, 169, 74, 0.9), rgba(216, 169, 74, 0));
-    }
-
-    body::after {
-      bottom: -140px;
-      left: -90px;
-      background: radial-gradient(circle, rgba(56, 189, 248, 0.85), rgba(56, 189, 248, 0));
-    }
-
-    .shell {
-      position: relative;
-      z-index: 1;
-      width: min(1440px, calc(100% - 24px));
-      margin: 12px auto 28px;
-      border: 1px solid var(--line);
-      border-radius: 30px;
-      overflow: hidden;
-      background: linear-gradient(180deg, rgba(7, 17, 31, 0.76), rgba(9, 14, 26, 0.9));
-      backdrop-filter: blur(24px);
-      box-shadow: var(--shadow);
-    }
-
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      padding: 22px 24px;
-      border-bottom: 1px solid var(--line);
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
-      flex-wrap: wrap;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      min-width: 260px;
-    }
-
-    .brand-mark {
-      width: 56px;
-      height: 56px;
-      border-radius: 18px;
-      display: grid;
-      place-items: center;
-      color: #1a1202;
-      font-weight: 900;
-      letter-spacing: 0.08em;
-      background: linear-gradient(135deg, var(--gold-2), var(--gold));
-      box-shadow: 0 16px 30px rgba(216, 169, 74, 0.34);
-      flex: 0 0 auto;
-    }
-
-    .brand-copy h1,
-    .hero h2,
-    .panel-title,
-    .section-title {
-      font-family: "Cormorant Garamond", Georgia, serif;
-      font-weight: 700;
-      letter-spacing: 0.01em;
-      margin: 0;
-    }
-
-    .brand-copy h1 { font-size: 1.55rem; line-height: 1; }
-    .brand-copy p { margin: 4px 0 0; color: var(--muted); font-size: 0.92rem; }
-
-    .top-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    .btn {
-      appearance: none;
-      border: 0;
-      border-radius: 999px;
-      padding: 12px 16px;
-      font-weight: 700;
-      text-decoration: none;
-      cursor: pointer;
-      transition: transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      white-space: nowrap;
-    }
-
-    .btn:hover { transform: translateY(-1px); }
-    .btn.primary {
-      color: #111827;
-      background: linear-gradient(135deg, var(--gold-2), var(--gold));
-      box-shadow: 0 14px 30px rgba(216, 169, 74, 0.18);
-    }
-    .btn.ghost {
-      color: var(--text);
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--line);
-    }
-    .btn.danger {
-      color: #fff;
-      background: linear-gradient(135deg, #fb7185, #ef4444);
-      box-shadow: 0 14px 28px rgba(239, 68, 68, 0.16);
-    }
-
-    .hero {
-      display: grid;
-      grid-template-columns: 1.4fr 0.9fr;
-      gap: 18px;
-      padding: 24px;
-    }
-
-    .hero-card,
-    .panel,
-    .mini-card {
-      border: 1px solid var(--line);
-      border-radius: 24px;
-      background: var(--surface);
-      box-shadow: 0 14px 50px rgba(0, 0, 0, 0.18);
-    }
-
-    .hero-card {
-      padding: 26px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero-card::after {
-      content: "";
-      position: absolute;
-      inset: auto -80px -120px auto;
-      width: 260px;
-      height: 260px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(216, 169, 74, 0.16), transparent 68%);
-      pointer-events: none;
-    }
-
-    .kicker {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 7px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(216, 169, 74, 0.25);
-      background: rgba(216, 169, 74, 0.09);
-      color: #f7e3b2;
-      font-size: 0.78rem;
-      font-weight: 800;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-    }
-
-    .hero h2 {
-      font-size: clamp(2.55rem, 4.4vw, 5rem);
-      line-height: 0.92;
-      margin-top: 14px;
-      max-width: 11ch;
-    }
-
-    .hero p {
-      margin: 16px 0 0;
-      max-width: 68ch;
-      color: var(--muted);
-      font-size: 1rem;
-      line-height: 1.7;
-    }
-
-    .hero-tags,
-    .pills {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 18px;
-    }
-
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 9px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.03);
-      color: #dbe5f5;
-      font-size: 0.84rem;
-      font-weight: 700;
-    }
-
-    .hero-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 22px;
-    }
-
-    .status-card {
-      padding: 22px;
-      display: grid;
-      gap: 16px;
-    }
-
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 14px;
-      border-radius: 999px;
-      font-weight: 800;
-      width: fit-content;
-      border: 1px solid transparent;
-    }
-
-    .status-badge.ok {
-      color: #c9f7d4;
-      background: rgba(34, 197, 94, 0.12);
-      border-color: rgba(34, 197, 94, 0.24);
-    }
-
-    .status-badge.warn {
-      color: #ffd8d8;
-      background: rgba(239, 68, 68, 0.12);
-      border-color: rgba(239, 68, 68, 0.24);
-    }
-
-    .status-lines {
-      display: grid;
-      gap: 12px;
-    }
-
-    .status-lines .line {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 12px 14px;
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--line);
-      color: #dbe5f5;
-      font-size: .94rem;
-    }
-
-    .status-lines .line span:last-child { color: var(--muted); text-align: right; }
-
-    .metrics {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 14px;
-      padding: 0 24px 24px;
-    }
-
-    .metric {
-      padding: 18px;
-      border-radius: 22px;
-      border: 1px solid var(--line);
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
-      min-height: 116px;
-      display: grid;
-      align-content: space-between;
-    }
-
-    .metric .label {
-      color: var(--muted);
-      font-size: .86rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-    }
-
-    .metric .value {
-      font-size: 1.7rem;
-      font-weight: 800;
-      line-height: 1.1;
-      margin-top: 10px;
-    }
-
-    .metric .hint { color: var(--muted); font-size: .92rem; margin-top: 6px; }
-
-    .layout {
-      display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap: 18px;
-      padding: 0 24px 24px;
-    }
-
-    .stack { display: grid; gap: 18px; }
-
-    .panel {
-      padding: 22px;
-    }
-
-    .panel-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 18px;
-      flex-wrap: wrap;
-    }
-
-    .section-title { font-size: 2rem; }
-    .panel-subtitle { color: var(--muted); margin-top: 6px; line-height: 1.65; max-width: 70ch; }
-
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .form-grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-
-    label {
-      display: block;
-      margin: 0 0 8px;
-      color: #dbe5f5;
-      font-weight: 700;
-      font-size: .93rem;
-    }
-
-    input[type="text"],
-    input[type="number"],
-    select,
-    textarea {
-      width: 100%;
-      border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.09);
-      background: rgba(3, 8, 20, 0.72);
-      color: var(--text);
-      padding: 13px 14px;
-      font: inherit;
-      outline: none;
-      transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
-    }
-
-    input[type="text"]:focus,
-    input[type="number"]:focus,
-    select:focus,
-    textarea:focus {
-      border-color: rgba(216, 169, 74, 0.55);
-      box-shadow: 0 0 0 4px rgba(216, 169, 74, 0.12);
-    }
-
-    textarea { min-height: 118px; resize: vertical; }
-
-    .toggle-row {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px 14px;
-      margin-top: 8px;
-    }
-
-    .toggle {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 14px;
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--line);
-      color: #e7edf9;
-      font-size: .94rem;
-      min-height: 52px;
-    }
-
-    .toggle input { accent-color: var(--gold); width: 18px; height: 18px; }
-
-    .aside-note {
-      display: grid;
-      gap: 14px;
-    }
-
-    .note-card {
-      border: 1px solid var(--line);
-      border-radius: 22px;
-      padding: 18px;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
-    }
-
-    .note-card h3 {
-      margin: 0 0 8px;
-      font-size: 1.2rem;
-      font-family: "Cormorant Garamond", Georgia, serif;
-    }
-
-    .note-card p,
-    .note-card li {
-      color: var(--muted);
-      line-height: 1.7;
-      margin: 0;
-    }
-
-    .note-card ul { margin: 10px 0 0; padding-left: 18px; }
-    .note-card li + li { margin-top: 8px; }
-
-    .condition-row {
-      border: 1px solid rgba(255, 255, 255, 0.09);
-      border-radius: 20px;
-      padding: 16px;
-      background: rgba(255, 255, 255, 0.03);
-      margin-top: 14px;
-    }
-
-    .rule-card {
-      border: 1px solid var(--line);
-      border-radius: 22px;
-      padding: 18px;
-      background: rgba(255, 255, 255, 0.03);
-      margin-top: 14px;
-    }
-
-    .rule-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-bottom: 12px;
-    }
-
-    .rule-top h4 { margin: 0; font-size: 1.2rem; }
-    .rule-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
-
-    .mini-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 7px 10px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--line);
-      color: #dde8fb;
-      font-size: .82rem;
-      font-weight: 700;
-    }
-
-    .mini-tag.ok { color: #cff5db; border-color: rgba(34, 197, 94, 0.22); background: rgba(34, 197, 94, 0.12); }
-    .mini-tag.off { color: #ffd1d1; border-color: rgba(239, 68, 68, 0.22); background: rgba(239, 68, 68, 0.12); }
-
-    .table-wrap {
-      overflow-x: auto;
-      border-radius: 20px;
-      border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.02);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 920px;
-    }
-
-    th, td {
-      padding: 14px 14px;
-      text-align: left;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-      vertical-align: top;
-      font-size: .93rem;
-    }
-
-    th {
-      color: #dbe5f5;
-      font-size: .8rem;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      background: rgba(255, 255, 255, 0.03);
-      position: sticky;
-      top: 0;
-      z-index: 1;
-    }
-
-    td { color: #d8e2f4; }
-    .small { color: var(--muted); font-size: .9rem; }
-    .spaced { margin-top: 14px; }
-    .inline-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-    .notice {
-      margin-top: 12px;
-      color: var(--muted);
-      font-size: .92rem;
-      min-height: 1.1em;
-    }
-
-    .empty-state {
-      padding: 22px;
-      border-radius: 18px;
-      border: 1px dashed rgba(255, 255, 255, 0.12);
-      color: var(--muted);
-      text-align: center;
-      background: rgba(255, 255, 255, 0.02);
-    }
-
-    @media (max-width: 1180px) {
-      .hero,
-      .layout,
-      .metrics,
-      .form-grid,
-      .form-grid-3,
-      .toggle-row {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 760px) {
-      .shell { width: min(100% - 12px, 100%); margin: 6px auto 16px; border-radius: 22px; }
-      .topbar,
-      .hero,
-      .metrics,
-      .layout { padding-left: 14px; padding-right: 14px; }
-      .hero h2 { max-width: none; }
-      .brand-copy h1 { font-size: 1.28rem; }
-      .section-title { font-size: 1.6rem; }
-      .hero-card, .panel, .metric, .note-card, .mini-card { border-radius: 20px; }
-      .top-actions { width: 100%; justify-content: flex-start; }
-    }
+    :root{--blue:#0B63FF;--blue2:#0047D6;--cyan:#00B8FF;--ink:#071629;--muted:#637083;--paper:#F4F8FF;--white:#FFFFFF;--line:#DCE8FA;--green:#16C784;--orange:#FFB020;--shadow:0 28px 90px rgba(7,22,41,.12);--shadow2:0 16px 45px rgba(7,22,41,.10);--radius:30px}
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at 12% 8%,rgba(11,99,255,.12),transparent 32%),radial-gradient(circle at 88% 5%,rgba(0,184,255,.12),transparent 30%),linear-gradient(180deg,#FFFFFF 0%,#F5F9FF 48%,#FFFFFF 100%);overflow-x:hidden}
+    a{text-decoration:none;color:inherit} img{max-width:100%} .wrap{width:min(1180px,calc(100% - 38px));margin:auto}
+    .topbar{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.84);backdrop-filter:blur(20px);border-bottom:1px solid rgba(220,232,250,.9)}
+    .nav{min-height:82px;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:10px 0}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:950;letter-spacing:-.02em}
+    .brand img{width:176px;max-height:60px;object-fit:contain;display:block}
+    .brand-fallback{width:54px;height:54px;border-radius:18px;display:grid;place-items:center;color:#fff;font-weight:1000;background:linear-gradient(135deg,var(--blue),var(--cyan));box-shadow:0 14px 30px rgba(11,99,255,.22);font-size:18px}
+    .navlinks{display:flex;align-items:center;gap:22px;font-size:14px;font-weight:800;color:#1f2d44}.navlinks a{opacity:.88}.navlinks a:hover{color:var(--blue);opacity:1}
+    .nav-cta{display:flex;align-items:center;gap:10px;background:var(--ink);color:#fff;padding:13px 18px;border-radius:999px;box-shadow:0 14px 34px rgba(7,22,41,.18);font-weight:900;font-size:14px}
+    .hero{position:relative;padding:74px 0 66px;min-height:calc(100vh - 82px);display:flex;align-items:center}
+    .hero::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.96),rgba(255,255,255,.76),rgba(255,255,255,.92)),url("https://solutecno.com.ar/assets/hero-bg.webp");background-size:cover;background-position:center;opacity:.74;z-index:-2}
+    .hero::after{content:"";position:absolute;width:680px;height:680px;border-radius:50%;background:linear-gradient(135deg,rgba(11,99,255,.18),rgba(0,184,255,.05));right:-260px;top:-180px;z-index:-1}
+    .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:44px;align-items:center}
+    .badge{display:inline-flex;align-items:center;gap:10px;padding:11px 15px;border:1px solid rgba(11,99,255,.18);background:rgba(255,255,255,.86);box-shadow:0 14px 34px rgba(7,22,41,.08);border-radius:999px;color:#0747B9;font-weight:950;font-size:13px;letter-spacing:.04em;text-transform:uppercase}.badge-dot{width:10px;height:10px;background:var(--green);border-radius:50%;box-shadow:0 0 0 7px rgba(22,199,132,.13);flex:0 0 auto}
+    h1{font-size:clamp(44px,5.8vw,80px);line-height:.93;letter-spacing:-.075em;margin:22px 0 20px;max-width:760px;font-weight:1000}.gradient-text{background:linear-gradient(90deg,var(--blue),var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .hero-copy{font-size:clamp(18px,2vw,21px);line-height:1.65;color:#475569;max-width:700px;margin:0 0 28px;font-weight:560}.hero-points{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 26px}.hero-point{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow2);color:#0F2A48;font-weight:850;font-size:13px}.hero-point::before{content:"";width:9px;height:9px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--cyan));flex:0 0 auto}
+    .actions{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:56px;padding:0 24px;border-radius:18px;font-weight:950;transition:.25s ease;border:1px solid transparent}.btn-primary{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;box-shadow:0 18px 42px rgba(11,99,255,.28)}.btn-primary:hover{transform:translateY(-4px);box-shadow:0 24px 55px rgba(11,99,255,.36)}.btn-soft{background:#fff;color:var(--ink);border-color:var(--line);box-shadow:0 12px 32px rgba(7,22,41,.08)}.btn-soft:hover{transform:translateY(-4px);border-color:rgba(11,99,255,.30)}
+    .hero-card{position:relative;background:rgba(255,255,255,.92);border:1px solid rgba(220,232,250,.95);box-shadow:var(--shadow);border-radius:38px;padding:22px;overflow:hidden}.hero-card::before{content:"";position:absolute;width:260px;height:260px;right:-100px;top:-100px;background:linear-gradient(135deg,rgba(11,99,255,.18),rgba(0,184,255,.06));border-radius:50%;pointer-events:none}.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+    .status-badge{display:inline-flex;align-items:center;gap:10px;padding:11px 14px;border-radius:999px;font-weight:950;font-size:13px;border:1px solid transparent}.status-badge.ok{color:#0B6A45;background:rgba(22,199,132,.12);border-color:rgba(22,199,132,.22)}.status-badge.warn{color:#A55A00;background:rgba(255,176,32,.12);border-color:rgba(255,176,32,.24)}
+    .status-list{display:grid;gap:10px;margin-top:18px}.status-line{display:flex;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:16px;background:#F4F8FF;border:1px solid var(--line);color:#1F2D44;font-weight:750;font-size:14px}.status-line span:last-child{color:var(--muted);text-align:right}.hero-card .actions{margin-top:18px}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:0 0 26px;margin-top:22px}.stat{background:#fff;border:1px solid var(--line);border-radius:28px;padding:20px;box-shadow:0 16px 45px rgba(7,22,41,.07)}.stat b{display:block;color:var(--blue);font-size:28px;line-height:1;margin-bottom:7px}.stat span{display:block;color:var(--muted);font-weight:700;line-height:1.5}
+    .section{padding:84px 0}.section-head{text-align:center;max-width:820px;margin:0 auto 42px}.eyebrow{color:var(--blue);font-weight:1000;font-size:13px;text-transform:uppercase;letter-spacing:.13em} h2{font-size:clamp(34px,4.6vw,60px);line-height:.98;letter-spacing:-.055em;margin:12px 0 16px;font-weight:1000}.section-head p{color:var(--muted);font-size:19px;line-height:1.65;margin:0}
+    .panel{background:#fff;border:1px solid var(--line);border-radius:34px;box-shadow:0 16px 45px rgba(7,22,41,.07);padding:26px}.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+    .field{margin-bottom:16px} label{display:block;font-weight:850;margin:0 0 7px;color:#1f2d44;font-size:14px}
+    input[type="text"],input[type="number"],select,textarea{width:100%;box-sizing:border-box;padding:13px 14px;border:1px solid #d1dff3;border-radius:16px;background:#fff;color:var(--ink);font:inherit;box-shadow:inset 0 1px 0 rgba(255,255,255,.75)} textarea{min-height:118px;resize:vertical}
+    input[type="text"]:focus,input[type="number"]:focus,select:focus,textarea:focus{outline:none;border-color:rgba(11,99,255,.5);box-shadow:0 0 0 4px rgba(11,99,255,.10)}
+    .toggle-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px}.toggle{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:16px;background:#F4F8FF;border:1px solid var(--line);color:#1F2D44;font-weight:750}.toggle input{accent-color:var(--blue)}
+    .mini-actions{display:flex;gap:10px;flex-wrap:wrap}.small{color:var(--muted);font-size:14px}.spaced{margin-top:14px}
+    .section-title{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:18px}.section-title h3{margin:0;font-size:28px;line-height:1;letter-spacing:-.04em}
+    .note-box{background:#F4F8FF;border:1px solid var(--line);border-radius:26px;padding:20px;color:#1F2D44}.note-box ul{margin:10px 0 0;padding-left:18px}.note-box li{color:var(--muted);line-height:1.6}.note-box li+li{margin-top:8px}
+    .condition-row{margin-top:12px;padding:16px;border:1px solid var(--line);border-radius:22px;background:#F9FBFF}
+    .rule-card{border:1px solid var(--line);border-radius:24px;padding:18px;background:#fff;box-shadow:0 12px 30px rgba(7,22,41,.05);margin-top:14px}.rule-meta{display:flex;gap:8px;flex-wrap:wrap}
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:7px 10px;border-radius:999px;border:1px solid var(--line);background:#F4F8FF;color:#1F2D44;font-size:12px;font-weight:800}.pill.ok{color:#0B6A45;background:rgba(22,199,132,.10);border-color:rgba(22,199,132,.18)}.pill.off{color:#A55A00;background:rgba(255,176,32,.10);border-color:rgba(255,176,32,.18)}
+    .table-wrap{overflow-x:auto;border-radius:22px;border:1px solid var(--line);background:#fff} table{width:100%;border-collapse:collapse;min-width:900px} th,td{padding:14px 14px;border-bottom:1px solid #E9EFFA;text-align:left;vertical-align:top;font-size:14px} th{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:#4A5B78;background:#F7FAFF;position:sticky;top:0;z-index:1} td{color:#1F2D44}
+    .empty-state{padding:24px;border-radius:20px;border:1px dashed #CFE0FF;color:var(--muted);background:#FBFDFF;text-align:center}.footer-bar{margin:48px 0 0;padding:20px 0 0;color:var(--muted);font-size:14px;text-align:center}
+    @media(max-width:1100px){.hero-grid,.stats,.grid-2,.grid-3,.toggle-row{grid-template-columns:1fr}.hero{min-height:auto;padding:48px 0}.navlinks{display:none}.brand img{width:150px}}
+    @media(max-width:720px){.wrap{width:min(100% - 24px,1180px)}.nav{min-height:74px}h1{font-size:clamp(36px,13vw,54px)}h2{font-size:clamp(28px,10vw,40px)}.hero-card,.panel,.stat{border-radius:24px}.actions .btn{width:100%}.nav-cta{padding:12px 16px}}
   </style>
 </head>
 <body>
-  <main class="shell">
-    <header class="topbar">
-      <div class="brand">
-        <div class="brand-mark">SA</div>
-        <div class="brand-copy">
-          <h1>Solutecno Argentina</h1>
-          <p>Bot Premium Control Center</p>
-        </div>
-      </div>
-      <div class="top-actions">
-        <a class="btn ghost" href="/api/qr" target="_blank" rel="noreferrer">Ver QR</a>
-        <button class="btn primary" type="button" onclick="restartWhatsapp()">Reiniciar WhatsApp</button>
-      </div>
-    </header>
+  <header class="topbar">
+    <div class="wrap nav">
+      <a class="brand" href="/" aria-label="Solutecno Argentina">
+        <img src="https://solutecno.com.ar/assets/logo-solutecno2.png" alt="Solutecno Argentina" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'brand-fallback',textContent:'SA'}))">
+      </a>
+      <nav class="navlinks" aria-label="Navegación">
+        <a href="#estado">Estado</a>
+        <a href="#config">Configuración</a>
+        <a href="#reglas">Reglas</a>
+        <a href="#mensajes">Mensajes</a>
+      </nav>
+      <a class="nav-cta" href="/api/qr" target="_blank" rel="noreferrer">Ver QR</a>
+    </div>
+  </header>
 
+  <main>
     <section class="hero">
-      <article class="hero-card">
-        <span class="kicker">Branding premium para WhatsApp</span>
-        <h2>Tu bot tiene que verse como una marca profesional.</h2>
-        <p>
-          Rediseñe este panel con la identidad de Solutecno Argentina: jerarquia clara, presencia corporativa,
-          foco comercial y una experiencia visual que no parezca un chatbot genérico.
-        </p>
-        <div class="hero-tags">
-          <span class="pill">Web + Google + WhatsApp + ventas</span>
-          <span class="pill">Look premium y corporativo</span>
-          <span class="pill">Listo para leads y soporte</span>
+      <div class="wrap hero-grid">
+        <div>
+          <div class="badge"><span class="badge-dot"></span>Bot premium de Solutecno Argentina</div>
+          <h1>WhatsApp <span class="gradient-text">con imagen profesional</span> para atender, derivar y vender.</h1>
+          <p class="hero-copy">Un panel limpio, rápido y claro, inspirado en la identidad de Solutecno Argentina: azul corporativo, interfaz liviana y una presentación seria para tu bot de WhatsApp.</p>
+          <div class="hero-points">
+            <span class="hero-point">Branding claro y comercial</span>
+            <span class="hero-point">Evita estados, grupos y bucles</span>
+            <span class="hero-point">Sesión de WhatsApp recuperable</span>
+          </div>
+          <div class="actions">
+            <button class="btn btn-primary" type="button" onclick="loadAll()">Actualizar panel</button>
+            <button class="btn btn-soft" type="button" onclick="restartWhatsapp()">Reiniciar WhatsApp</button>
+            <button class="btn btn-soft" type="button" onclick="resetSession()">Limpiar sesión y reconectar</button>
+          </div>
         </div>
-        <div class="hero-actions">
-          <button class="btn primary" type="button" onclick="loadAll()">Actualizar tablero</button>
-          <a class="btn ghost" href="#rulesSection">Ir a reglas</a>
-        </div>
-      </article>
 
-      <aside class="hero-card status-card">
-        <div id="heroBadge" class="status-badge warn">Desconectado</div>
-        <div class="status-lines">
-          <div class="line"><span>WhatsApp</span><span id="stateLine">Sin estado</span></div>
-          <div class="line"><span>QR</span><span id="qrLine">No disponible</span></div>
-          <div class="line"><span>Fallback</span><span id="fallbackLine">Secretaria</span></div>
-          <div class="line"><span>Ultima actualizacion</span><span id="updatedLine">-</span></div>
-        </div>
-        <div class="inline-actions">
-          <button class="btn ghost" type="button" onclick="loadAll()">Refrescar</button>
-          <button class="btn danger" type="button" onclick="restartWhatsapp()">Reiniciar</button>
-        </div>
-      </aside>
-    </section>
-
-    <section class="metrics">
-      <div class="metric">
-        <div class="label">Estado</div>
-        <div id="statStatus" class="value">-</div>
-        <div id="statStatusHint" class="hint">-</div>
-      </div>
-      <div class="metric">
-        <div class="label">Reglas activas</div>
-        <div id="statRules" class="value">-</div>
-        <div id="statRulesHint" class="hint">-</div>
-      </div>
-      <div class="metric">
-        <div class="label">Mensajes recientes</div>
-        <div id="statMessages" class="value">-</div>
-        <div id="statMessagesHint" class="hint">-</div>
-      </div>
-      <div class="metric">
-        <div class="label">Fallback</div>
-        <div id="statFallback" class="value">-</div>
-        <div id="statFallbackHint" class="hint">-</div>
+        <aside class="hero-card" id="estado">
+          <div class="card-top">
+            <div>
+              <div class="eyebrow">Estado en vivo</div>
+              <h2 style="margin:10px 0 0;font-size:34px;line-height:1.02;letter-spacing:-.04em;">Conexión WhatsApp</h2>
+            </div>
+            <div id="heroBadge" class="status-badge warn">Desconectado</div>
+          </div>
+          <div class="status-list">
+            <div class="status-line"><span>WhatsApp</span><span id="stateLine">Sin estado</span></div>
+            <div class="status-line"><span>QR</span><span id="qrLine">No disponible</span></div>
+            <div class="status-line"><span>Fallback</span><span id="fallbackLine">Secretaria</span></div>
+            <div class="status-line"><span>Última actualización</span><span id="updatedLine">-</span></div>
+          </div>
+          <div class="mini-actions spaced">
+            <a class="btn btn-primary" href="/api/qr" target="_blank" rel="noreferrer">Abrir QR</a>
+            <button class="btn btn-soft" type="button" onclick="resetSession()">Recrear sesión</button>
+          </div>
+        </aside>
       </div>
     </section>
 
-    <section class="layout">
-      <div class="stack">
-        <section class="panel">
-          <div class="panel-header">
-            <div>
-              <div class="section-title">Identidad del bot</div>
-              <div class="panel-subtitle">
-                Ajusta el lenguaje, la personalidad y los bloqueos para que el bot responda con una voz consistente,
-                breve y de marca.
-              </div>
-            </div>
-            <span class="mini-tag">Configuracion general</span>
-          </div>
+    <section class="wrap">
+      <div class="stats">
+        <div class="stat"><b id="statStatus">-</b><span id="statStatusHint">-</span></div>
+        <div class="stat"><b id="statRules">-</b><span id="statRulesHint">-</span></div>
+        <div class="stat"><b id="statMessages">-</b><span id="statMessagesHint">-</span></div>
+        <div class="stat"><b id="statFallback">-</b><span id="statFallbackHint">-</span></div>
+      </div>
+    </section>
 
-          <div class="form-grid">
-            <div>
-              <label>Nombre de la empresa</label>
-              <input type="text" id="company_name">
-            </div>
-            <div>
-              <label>Agente por defecto</label>
-              <select id="fallback_agent">
-                <option value="secretary">Secretaria</option>
-                <option value="sales">Ventas</option>
-                <option value="support">Soporte</option>
-              </select>
-            </div>
-          </div>
+    <section class="section" id="config">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="eyebrow">Configuración</div>
+          <h2>Identidad, tono y bloqueos</h2>
+          <p>Todo lo que define cómo habla tu bot y qué conversaciones debe ignorar.</p>
+        </div>
 
-          <div class="toggle-row spaced">
+        <div class="panel">
+          <div class="section-title">
+            <h3>Configuración general</h3>
+            <span class="small">Ajustes principales del bot</span>
+          </div>
+          <div class="grid-2">
+            <div class="field"><label>Nombre de la empresa</label><input type="text" id="company_name"></div>
+            <div class="field"><label>Agente por defecto</label><select id="fallback_agent"><option value="secretary">Secretaria</option><option value="sales">Ventas</option><option value="support">Soporte</option></select></div>
+          </div>
+          <div class="toggle-row">
             <label class="toggle"><input type="checkbox" id="block_groups"> Bloquear grupos</label>
             <label class="toggle"><input type="checkbox" id="block_newsletters"> Bloquear newsletters</label>
             <label class="toggle"><input type="checkbox" id="block_status"> Bloquear estados</label>
             <label class="toggle"><input type="checkbox" id="block_from_me"> Ignorar mensajes propios</label>
-            <label class="toggle"><input type="checkbox" id="anti_old_messages"> Ignorar mensajes viejos al arrancar</label>
+            <label class="toggle"><input type="checkbox" id="anti_old_messages"> Ignorar mensajes viejos</label>
             <label class="toggle"><input type="checkbox" id="default_reply_enabled"> Respuestas activas</label>
           </div>
-
-          <div class="notice">Usa esto para evitar bucles, mensajes viejos y ruido en estados o grupos.</div>
-          <div class="inline-actions spaced">
-            <button class="btn primary" type="button" onclick="saveConfig()">Guardar identidad</button>
-            <span id="saveMsg" class="notice"></span>
-          </div>
-        </section>
-
-        <section class="panel">
-          <div class="panel-header">
-            <div>
-              <div class="section-title">Agentes de marca</div>
-              <div class="panel-subtitle">
-                Define el tono de Secretaria, Ventas y Soporte para que la experiencia se sienta uniforme y premium.
-              </div>
-            </div>
-            <span class="mini-tag">Tono editorial</span>
-          </div>
-
-          <div class="form-grid">
-            <div>
-              <label>Secretaria - nombre</label>
-              <input type="text" id="secretary_name">
-            </div>
-            <div>
-              <label>Secretaria - personalidad</label>
-              <input type="text" id="secretary_personality">
-            </div>
-          </div>
-          <div class="spaced">
-            <label>Secretaria - conocimientos</label>
-            <textarea id="secretary_knowledge"></textarea>
-          </div>
-
-          <div class="form-grid spaced">
-            <div>
-              <label>Ventas - nombre</label>
-              <input type="text" id="sales_name">
-            </div>
-            <div>
-              <label>Ventas - personalidad</label>
-              <input type="text" id="sales_personality">
-            </div>
-          </div>
-          <div class="spaced">
-            <label>Ventas - conocimientos</label>
-            <textarea id="sales_knowledge"></textarea>
-          </div>
-
-          <div class="form-grid spaced">
-            <div>
-              <label>Soporte - nombre</label>
-              <input type="text" id="support_name">
-            </div>
-            <div>
-              <label>Soporte - personalidad</label>
-              <input type="text" id="support_personality">
-            </div>
-          </div>
-          <div class="spaced">
-            <label>Soporte - conocimientos</label>
-            <textarea id="support_knowledge"></textarea>
-          </div>
-        </section>
-      </div>
-
-      <aside class="aside-note">
-        <div class="note-card">
-          <h3>Lineas de marca</h3>
-          <ul>
-            <li>Usa contraste alto, espacios amplios y mensajes directos.</li>
-            <li>La interfaz debe parecer una extension natural de Solutecno Argentina.</li>
-            <li>Menos ruido visual, mas claridad comercial.</li>
-          </ul>
+          <div class="spaced mini-actions"><button class="btn btn-primary" type="button" onclick="saveConfig()">Guardar configuración</button><span id="saveMsg" class="small"></span></div>
         </div>
 
-        <div class="note-card">
-          <h3>Checklist premium</h3>
-          <ul>
-            <li>Cabecera fuerte y reconocible.</li>
-            <li>Estados claros para WhatsApp, QR y fallback.</li>
-            <li>Cards limpias, metrica visible y llamadas a la accion consistentes.</li>
-          </ul>
-        </div>
-
-        <div class="note-card">
-          <h3>Guia operativa</h3>
-          <p>Si algo no responde bien, primero revisa reglas activas, fallbacks y filtros de mensajes viejos.</p>
-        </div>
-      </aside>
-    </section>
-
-    <section class="panel" id="rulesSection">
-      <div class="panel-header">
-        <div>
-          <div class="section-title">Motor de reglas</div>
-          <div class="panel-subtitle">
-            Crea disparadores con prioridad, condiciones y respuestas alineadas al tono de Solutecno Argentina.
-          </div>
-        </div>
-        <span class="mini-tag">Automatizacion</span>
-      </div>
-
-      <div class="form-grid">
-        <div>
-          <label>Nombre de la regla</label>
-          <input type="text" id="rule_name" placeholder="Ej: Venta urgente">
-        </div>
-        <div>
-          <label>Descripcion</label>
-          <input type="text" id="rule_description" placeholder="Descripcion interna">
-        </div>
-      </div>
-
-      <div class="form-grid-3 spaced">
-        <div>
-          <label>Prioridad</label>
-          <input type="number" id="rule_priority" value="100">
-        </div>
-        <div>
-          <label>Logica</label>
-          <select id="rule_logic_operator">
-            <option value="AND">AND - todas</option>
-            <option value="OR">OR - una basta</option>
-          </select>
-        </div>
-        <div>
-          <label>Tipo de respuesta</label>
-          <select id="rule_reply_type" onchange="toggleCustomReplyBox()">
-            <option value="custom">Personalizada</option>
-            <option value="secretary">Secretaria</option>
-            <option value="sales">Ventas</option>
-            <option value="support">Soporte</option>
-          </select>
-        </div>
-      </div>
-
-      <div id="customReplyWrap" class="spaced">
-        <label>Respuesta personalizada</label>
-        <textarea id="rule_custom_reply" placeholder="Texto exacto que enviara la regla"></textarea>
-      </div>
-
-      <div class="toggle-row spaced">
-        <label class="toggle"><input type="checkbox" id="rule_enabled" checked> Regla activa</label>
-        <label class="toggle"><input type="checkbox" id="rule_stop_processing" checked> Detener al coincidir</label>
-        <div></div>
-      </div>
-
-      <div class="spaced">
-        <h3 class="panel-title" style="font-size:1.6rem; margin:0 0 8px;">Condiciones</h3>
-        <div class="small">Arma disparadores por palabra clave, contacto, telefono o chat.</div>
-        <div id="conditionsWrap"></div>
-        <div class="inline-actions spaced">
-          <button class="btn ghost" type="button" onclick="addCondition()">Agregar condicion</button>
-          <button class="btn primary" type="button" onclick="createRule()">Guardar regla</button>
-          <span id="ruleMsg" class="notice"></span>
+        <div class="grid-3 spaced">
+          <div class="panel"><div class="section-title"><h3>Secretaria</h3></div><div class="field"><label>Nombre</label><input type="text" id="secretary_name"></div><div class="field"><label>Personalidad</label><input type="text" id="secretary_personality"></div><div class="field"><label>Conocimientos</label><textarea id="secretary_knowledge"></textarea></div></div>
+          <div class="panel"><div class="section-title"><h3>Ventas</h3></div><div class="field"><label>Nombre</label><input type="text" id="sales_name"></div><div class="field"><label>Personalidad</label><input type="text" id="sales_personality"></div><div class="field"><label>Conocimientos</label><textarea id="sales_knowledge"></textarea></div></div>
+          <div class="panel"><div class="section-title"><h3>Soporte</h3></div><div class="field"><label>Nombre</label><input type="text" id="support_name"></div><div class="field"><label>Personalidad</label><input type="text" id="support_personality"></div><div class="field"><label>Conocimientos</label><textarea id="support_knowledge"></textarea></div></div>
         </div>
       </div>
     </section>
 
-    <section class="panel">
-      <div class="panel-header">
-        <div>
-          <div class="section-title">Reglas guardadas</div>
-          <div class="panel-subtitle">Revisa lo que ya esta activo en el motor de respuesta.</div>
+    <section class="section" id="reglas">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="eyebrow">Motor de reglas</div>
+          <h2>Automatización ordenada y fácil de auditar</h2>
+          <p>Crea disparadores por contenido, contacto o teléfono y mantené control visual de cada regla.</p>
         </div>
-        <span class="mini-tag">Lista activa</span>
+
+        <div class="panel">
+          <div class="section-title"><h3>Nueva regla</h3><span class="small">Prioridad, lógica y respuesta</span></div>
+          <div class="grid-2">
+            <div class="field"><label>Nombre de la regla</label><input type="text" id="rule_name" placeholder="Ej: Venta urgente"></div>
+            <div class="field"><label>Descripción</label><input type="text" id="rule_description" placeholder="Descripción interna"></div>
+          </div>
+          <div class="grid-3">
+            <div class="field"><label>Prioridad</label><input type="number" id="rule_priority" value="100"></div>
+            <div class="field"><label>Lógica entre condiciones</label><select id="rule_logic_operator"><option value="AND">AND (todas)</option><option value="OR">OR (una basta)</option></select></div>
+            <div class="field"><label>Tipo de respuesta</label><select id="rule_reply_type" onchange="toggleCustomReplyBox()"><option value="custom">Personalizada</option><option value="secretary">Secretaria</option><option value="sales">Ventas</option><option value="support">Soporte</option></select></div>
+          </div>
+          <div id="customReplyWrap" class="field spaced"><label>Respuesta personalizada</label><textarea id="rule_custom_reply" placeholder="Texto exacto que enviará la regla"></textarea></div>
+          <div class="toggle-row">
+            <label class="toggle"><input type="checkbox" id="rule_enabled" checked> Regla activa</label>
+            <label class="toggle"><input type="checkbox" id="rule_stop_processing" checked> Detener al coincidir</label>
+            <div></div>
+          </div>
+          <div class="spaced">
+            <h3 style="margin:0 0 8px;font-size:24px;letter-spacing:-.04em;">Condiciones</h3>
+            <div class="small">Cada regla puede tener una o más condiciones.</div>
+            <div id="conditionsWrap"></div>
+            <div class="mini-actions spaced"><button class="btn btn-soft" type="button" onclick="addCondition()">Agregar condición</button><button class="btn btn-primary" type="button" onclick="createRule()">Guardar regla</button><span id="ruleMsg" class="small"></span></div>
+          </div>
+        </div>
+
+        <div class="grid-2 spaced">
+          <div class="panel"><div class="section-title"><h3>Reglas guardadas</h3></div><div id="rulesList" class="small">Cargando reglas...</div></div>
+          <div class="note-box"><div class="section-title" style="margin-bottom:6px;"><h3>Cómo resolver QR</h3></div><ul><li>Usa <strong>Limpiar sesión y reconectar</strong> si el QR se muestra pero no enlaza.</li><li>Si sigue igual, revisa que el VPS tenga Chrome o Chromium instalado.</li><li>El bot ahora borra la sesión si detecta auth failure o logout.</li></ul></div>
+        </div>
       </div>
-      <div id="rulesList" class="small">Cargando reglas...</div>
     </section>
 
-    <section class="panel">
-      <div class="panel-header">
-        <div>
-          <div class="section-title">Ultimos mensajes</div>
-          <div class="panel-subtitle">Vista rapida para auditar conversaciones y confirmar que el bot responde bien.</div>
+    <section class="section" id="mensajes">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="eyebrow">Mensajes</div>
+          <h2>Auditoría rápida de conversaciones</h2>
+          <p>Últimos mensajes procesados para verificar respuestas, reglas y comportamiento.</p>
         </div>
-        <span class="mini-tag">Auditoria</span>
+        <div class="panel"><div id="messagesBox" class="small">Cargando mensajes...</div></div>
+        <div class="footer-bar">Solutecno Argentina · Bot Premium Control Center</div>
       </div>
-      <div id="messagesBox" class="small">Cargando mensajes...</div>
     </section>
   </main>
 
   <script>
-    const state = {
-      status: { ready: false, state: 'sin dato', qrAvailable: false },
-      config: {},
-      rules: [],
-      messages: []
-    };
-
-    const fmt = new Intl.DateTimeFormat('es-AR', {
-      dateStyle: 'short',
-      timeStyle: 'short'
-    });
-
-    function escapeHtml(value) {
-      return String(value ?? '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-    }
-
-    function agentLabel(value) {
-      const map = { secretary: 'Secretaria', sales: 'Ventas', support: 'Soporte' };
-      return map[String(value || 'secretary')] || 'Secretaria';
-    }
-
-    function updateHero() {
-      const badge = document.getElementById('heroBadge');
-      const ready = !!state.status.ready;
-      badge.className = 'status-badge ' + (ready ? 'ok' : 'warn');
-      badge.textContent = ready ? 'WhatsApp conectado' : 'WhatsApp desconectado';
-      document.getElementById('stateLine').textContent = String(state.status.state || 'sin dato');
-      document.getElementById('qrLine').textContent = state.status.qrAvailable ? 'Disponible' : 'No disponible';
-      document.getElementById('fallbackLine').textContent = agentLabel(state.config.fallback_agent);
-      document.getElementById('updatedLine').textContent = fmt.format(new Date());
-    }
-
-    function updateMetrics() {
-      const activeRules = state.rules.filter(rule => Number(rule.enabled) === 1);
-      document.getElementById('statStatus').textContent = state.status.ready ? 'Online' : 'Offline';
-      document.getElementById('statStatusHint').textContent = state.status.qrAvailable ? 'QR visible' : 'Esperando conexion';
-      document.getElementById('statRules').textContent = String(activeRules.length);
-      document.getElementById('statRulesHint').textContent = `${state.rules.length} reglas totales`;
-      document.getElementById('statMessages').textContent = String(state.messages.length);
-      document.getElementById('statMessagesHint').textContent = 'Ultimos registros cargados';
-      document.getElementById('statFallback').textContent = agentLabel(state.config.fallback_agent);
-      document.getElementById('statFallbackHint').textContent = 'Agente de respaldo';
-    }
-
-    function toggleCustomReplyBox() {
-      const type = document.getElementById('rule_reply_type').value;
-      document.getElementById('customReplyWrap').style.display = type === 'custom' ? 'block' : 'none';
-    }
-
-    function addCondition(prefill = {}) {
-      const wrap = document.getElementById('conditionsWrap');
-      const row = document.createElement('div');
-      row.className = 'condition-row';
-      row.innerHTML = `
-        <div class="form-grid-3">
-          <div>
-            <label>Campo</label>
-            <select class="cond-field">
-              <option value="body">Mensaje</option>
-              <option value="contact_name">Nombre contacto</option>
-              <option value="phone">Telefono</option>
-              <option value="chat_id">Chat ID</option>
-            </select>
-          </div>
-          <div>
-            <label>Operador</label>
-            <select class="cond-operator">
-              <option value="contains">contiene</option>
-              <option value="not_contains">no contiene</option>
-              <option value="equals">igual a</option>
-              <option value="not_equals">distinto de</option>
-              <option value="starts_with">empieza con</option>
-              <option value="ends_with">termina con</option>
-              <option value="regex">regex</option>
-              <option value="is_empty">esta vacio</option>
-              <option value="is_not_empty">no esta vacio</option>
-            </select>
-          </div>
-          <div>
-            <label>Valor</label>
-            <input type="text" class="cond-value" placeholder="Texto a evaluar">
-          </div>
-        </div>
-        <div class="form-grid-3 spaced">
-          <div>
-            <label class="toggle" style="margin:0; width:100%;"><input type="checkbox" class="cond-case-sensitive"> Sensible a mayusculas</label>
-          </div>
-          <div></div>
-          <div style="display:flex; justify-content:flex-end; align-items:flex-end;">
-            <button class="btn danger" type="button" onclick="this.closest('.condition-row').remove()">Eliminar condicion</button>
-          </div>
-        </div>
-      `;
-      wrap.appendChild(row);
-      row.querySelector('.cond-field').value = prefill.field_name || 'body';
-      row.querySelector('.cond-operator').value = prefill.operator || 'contains';
-      row.querySelector('.cond-value').value = prefill.value || '';
-      row.querySelector('.cond-case-sensitive').checked = !!prefill.case_sensitive;
-    }
-
-    function collectConditions() {
-      return [...document.querySelectorAll('.condition-row')].map((row, index) => ({
-        field_name: row.querySelector('.cond-field').value,
-        operator: row.querySelector('.cond-operator').value,
-        value: row.querySelector('.cond-value').value,
-        case_sensitive: row.querySelector('.cond-case-sensitive').checked,
-        sort_order: index + 1
-      }));
-    }
-
-    async function requestJson(url, options) {
-      const response = await fetch(url, options);
-      return response.json();
-    }
-
-    async function loadStatus() {
-      try {
-        const data = await requestJson('/api/status');
-        state.status = data;
-        updateHero();
-        updateMetrics();
-      } catch (error) {
-        state.status = { ready: false, state: 'error', qrAvailable: false };
-        updateHero();
-      }
-    }
-
-    async function loadConfig() {
-      const data = await requestJson('/api/config');
-      state.config = data.config || {};
-      const config = state.config;
-      for (const key in config) {
-        const el = document.getElementById(key);
-        if (!el) continue;
-        if (el.type === 'checkbox') {
-          el.checked = !!config[key];
-        } else {
-          el.value = config[key] ?? '';
-        }
-      }
-      updateHero();
-      updateMetrics();
-    }
-
-    async function loadRules() {
-      const data = await requestJson('/api/rules');
-      state.rules = data.rules || [];
-      renderRules();
-      updateMetrics();
-    }
-
-    async function loadMessages() {
-      const data = await requestJson('/api/messages?limit=40');
-      state.messages = data.messages || [];
-      renderMessages();
-      updateMetrics();
-    }
-
-    function renderRules() {
-      const wrap = document.getElementById('rulesList');
-      if (!state.rules.length) {
-        wrap.innerHTML = '<div class="empty-state">No hay reglas cargadas todavia.</div>';
-        return;
-      }
-
-      wrap.innerHTML = state.rules.map(rule => {
-        const conds = (rule.conditions || []).map(c => `
-          <li><strong>${escapeHtml(c.field_name)}</strong> ${escapeHtml(c.operator)} <strong>${escapeHtml(c.value)}</strong>${c.case_sensitive ? ' (exacto)' : ''}</li>
-        `).join('');
-
-        return `
-          <article class="rule-card">
-            <div class="rule-top">
-              <div>
-                <h4>${escapeHtml(rule.name)}</h4>
-                <div class="small">${escapeHtml(rule.description || '')}</div>
-              </div>
-              <div class="rule-meta">
-                <span class="mini-tag">Prioridad ${escapeHtml(rule.priority)}</span>
-                <span class="mini-tag">${escapeHtml(rule.logic_operator)}</span>
-                <span class="mini-tag">${escapeHtml(rule.reply_type)}</span>
-                <span class="mini-tag ${Number(rule.enabled) ? 'ok' : 'off'}">${Number(rule.enabled) ? 'Activa' : 'Inactiva'}</span>
-              </div>
-            </div>
-            <div class="small">
-              <strong>Condiciones</strong>
-              <ul>${conds || '<li>Sin condiciones</li>'}</ul>
-            </div>
-            ${rule.reply_type === 'custom' ? `
-              <div class="spaced small"><strong>Respuesta personalizada</strong><div>${escapeHtml(rule.custom_reply || '')}</div></div>
-            ` : ''}
-            <div class="spaced inline-actions">
-              <button class="btn danger" type="button" onclick="deleteRule(${rule.id})">Eliminar</button>
-            </div>
-          </article>
-        `;
-      }).join('');
-    }
-
-    function renderMessages() {
-      const wrap = document.getElementById('messagesBox');
-      if (!state.messages.length) {
-        wrap.innerHTML = '<div class="empty-state">Todavia no hay mensajes para mostrar.</div>';
-        return;
-      }
-
-      const rows = state.messages.map(row => {
-        const date = row.created_at ? fmt.format(new Date(row.created_at.replace(' ', 'T'))) : '-';
-        return `
-          <tr>
-            <td>${escapeHtml(date)}</td>
-            <td>${escapeHtml(row.direction || '')}</td>
-            <td>${escapeHtml(row.contact_name || '')}</td>
-            <td>${escapeHtml(row.phone || '')}</td>
-            <td>${escapeHtml(row.rule_name || '')}</td>
-            <td>${escapeHtml(row.body || '')}</td>
-          </tr>
-        `;
-      }).join('');
-
-      wrap.innerHTML = `
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Fecha</th>
-                <th>Direccion</th>
-                <th>Contacto</th>
-                <th>Telefono</th>
-                <th>Regla</th>
-                <th>Mensaje</th>
-              </tr>
-            </thead>
-            <tbody>${rows}</tbody>
-          </table>
-        </div>
-      `;
-    }
-
-    async function saveConfig() {
-      const payload = {
-        company_name: document.getElementById('company_name').value,
-        fallback_agent: document.getElementById('fallback_agent').value,
-        secretary_name: document.getElementById('secretary_name').value,
-        secretary_personality: document.getElementById('secretary_personality').value,
-        secretary_knowledge: document.getElementById('secretary_knowledge').value,
-        sales_name: document.getElementById('sales_name').value,
-        sales_personality: document.getElementById('sales_personality').value,
-        sales_knowledge: document.getElementById('sales_knowledge').value,
-        support_name: document.getElementById('support_name').value,
-        support_personality: document.getElementById('support_personality').value,
-        support_knowledge: document.getElementById('support_knowledge').value,
-        block_groups: document.getElementById('block_groups').checked,
-        block_newsletters: document.getElementById('block_newsletters').checked,
-        block_status: document.getElementById('block_status').checked,
-        block_from_me: document.getElementById('block_from_me').checked,
-        anti_old_messages: document.getElementById('anti_old_messages').checked,
-        default_reply_enabled: document.getElementById('default_reply_enabled').checked
-      };
-
-      const data = await requestJson('/api/config', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      document.getElementById('saveMsg').textContent = data.ok ? 'Configuracion guardada.' : 'No se pudo guardar.';
-      if (data.ok) {
-        state.config = data.config || payload;
-        updateHero();
-        updateMetrics();
-      }
-    }
-
-    async function createRule() {
-      const payload = {
-        name: document.getElementById('rule_name').value,
-        description: document.getElementById('rule_description').value,
-        priority: Number(document.getElementById('rule_priority').value || 100),
-        logic_operator: document.getElementById('rule_logic_operator').value,
-        reply_type: document.getElementById('rule_reply_type').value,
-        custom_reply: document.getElementById('rule_custom_reply').value,
-        enabled: document.getElementById('rule_enabled').checked,
-        stop_processing: document.getElementById('rule_stop_processing').checked,
-        conditions: collectConditions()
-      };
-
-      if (!payload.name.trim()) {
-        document.getElementById('ruleMsg').textContent = 'Ponle un nombre a la regla.';
-        return;
-      }
-      if (!payload.conditions.length) {
-        document.getElementById('ruleMsg').textContent = 'Agrega al menos una condicion.';
-        return;
-      }
-
-      const data = await requestJson('/api/rules', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      document.getElementById('ruleMsg').textContent = data.ok ? 'Regla guardada.' : 'No se pudo guardar.';
-      if (data.ok) {
-        document.getElementById('rule_name').value = '';
-        document.getElementById('rule_description').value = '';
-        document.getElementById('rule_priority').value = '100';
-        document.getElementById('rule_logic_operator').value = 'AND';
-        document.getElementById('rule_reply_type').value = 'custom';
-        document.getElementById('rule_custom_reply').value = '';
-        document.getElementById('rule_enabled').checked = true;
-        document.getElementById('rule_stop_processing').checked = true;
-        document.getElementById('conditionsWrap').innerHTML = '';
-        addCondition();
-        toggleCustomReplyBox();
-        await loadRules();
-      }
-    }
-
-    async function deleteRule(id) {
-      if (!confirm('Eliminar esta regla?')) return;
-      const data = await requestJson('/api/rules/' + id, { method: 'DELETE' });
-      if (!data.ok) {
-        alert('No se pudo eliminar la regla.');
-        return;
-      }
-      await loadRules();
-    }
-
-    async function restartWhatsapp() {
-      await requestJson('/api/restart-whatsapp', { method: 'POST' });
-      document.getElementById('updatedLine').textContent = 'reinicio solicitado';
-      setTimeout(loadAll, 3500);
-    }
-
-    async function loadAll() {
-      await Promise.all([
-        loadStatus(),
-        loadConfig(),
-        loadRules(),
-        loadMessages()
-      ]);
-      updateHero();
-      updateMetrics();
-    }
-
-    async function boot() {
-      addCondition();
-      toggleCustomReplyBox();
-      await loadAll();
-      setInterval(loadStatus, 7000);
-      setInterval(loadMessages, 12000);
-      setInterval(loadRules, 20000);
-    }
-
+    const state = { status: { ready: false, state: 'sin dato', qrAvailable: false }, config: {}, rules: [], messages: [] };
+    const fmt = new Intl.DateTimeFormat('es-AR', { dateStyle: 'short', timeStyle: 'short' });
+    function escapeHtml(value) { return String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;'); }
+    function agentLabel(value) { const map = { secretary: 'Secretaria', sales: 'Ventas', support: 'Soporte' }; return map[String(value || 'secretary')] || 'Secretaria'; }
+    function updateHero() { const badge = document.getElementById('heroBadge'); const ready = !!state.status.ready; badge.className = 'status-badge ' + (ready ? 'ok' : 'warn'); badge.textContent = ready ? 'WhatsApp conectado' : 'WhatsApp desconectado'; document.getElementById('stateLine').textContent = String(state.status.state || 'sin dato'); document.getElementById('qrLine').textContent = state.status.qrAvailable ? 'Disponible' : 'No disponible'; document.getElementById('fallbackLine').textContent = agentLabel(state.config.fallback_agent); document.getElementById('updatedLine').textContent = fmt.format(new Date()); }
+    function updateMetrics() { const activeRules = state.rules.filter(rule => Number(rule.enabled) === 1); document.getElementById('statStatus').textContent = state.status.ready ? 'Online' : 'Offline'; document.getElementById('statStatusHint').textContent = state.status.qrAvailable ? 'QR visible' : 'Esperando conexión'; document.getElementById('statRules').textContent = String(activeRules.length); document.getElementById('statRulesHint').textContent = `${state.rules.length} reglas totales`; document.getElementById('statMessages').textContent = String(state.messages.length); document.getElementById('statMessagesHint').textContent = 'Últimos registros cargados'; document.getElementById('statFallback').textContent = agentLabel(state.config.fallback_agent); document.getElementById('statFallbackHint').textContent = 'Agente de respaldo'; }
+    function toggleCustomReplyBox() { const type = document.getElementById('rule_reply_type').value; document.getElementById('customReplyWrap').style.display = type === 'custom' ? 'block' : 'none'; }
+    function addCondition(prefill = {}) { const wrap = document.getElementById('conditionsWrap'); const row = document.createElement('div'); row.className = 'condition-row'; row.innerHTML = `<div class="grid-3"><div class="field"><label>Campo</label><select class="cond-field"><option value="body">Mensaje</option><option value="contact_name">Nombre contacto</option><option value="phone">Teléfono</option><option value="chat_id">Chat ID</option></select></div><div class="field"><label>Operador</label><select class="cond-operator"><option value="contains">contiene</option><option value="not_contains">no contiene</option><option value="equals">igual a</option><option value="not_equals">distinto de</option><option value="starts_with">empieza con</option><option value="ends_with">termina con</option><option value="regex">regex</option><option value="is_empty">está vacío</option><option value="is_not_empty">no está vacío</option></select></div><div class="field"><label>Valor</label><input type="text" class="cond-value" placeholder="Texto a evaluar"></div></div><div class="grid-3"><label class="toggle"><input type="checkbox" class="cond-case-sensitive"> Sensible a mayúsculas</label><div></div><div style="display:flex;justify-content:flex-end;align-items:flex-end;"><button class="btn btn-soft" type="button" onclick="this.closest('.condition-row').remove()">Eliminar condición</button></div></div>`; wrap.appendChild(row); row.querySelector('.cond-field').value = prefill.field_name || 'body'; row.querySelector('.cond-operator').value = prefill.operator || 'contains'; row.querySelector('.cond-value').value = prefill.value || ''; row.querySelector('.cond-case-sensitive').checked = !!prefill.case_sensitive; }
+    function collectConditions() { return [...document.querySelectorAll('.condition-row')].map((row, index) => ({ field_name: row.querySelector('.cond-field').value, operator: row.querySelector('.cond-operator').value, value: row.querySelector('.cond-value').value, case_sensitive: row.querySelector('.cond-case-sensitive').checked, sort_order: index + 1 })); }
+    async function requestJson(url, options) { const response = await fetch(url, options); return response.json(); }
+    async function loadStatus() { try { const data = await requestJson('/api/status'); state.status = data; updateHero(); updateMetrics(); } catch { state.status = { ready: false, state: 'error', qrAvailable: false }; updateHero(); } }
+    async function loadConfig() { const data = await requestJson('/api/config'); state.config = data.config || {}; const config = state.config; for (const key in config) { const el = document.getElementById(key); if (!el) continue; if (el.type === 'checkbox') el.checked = !!config[key]; else el.value = config[key] ?? ''; } updateHero(); updateMetrics(); }
+    async function loadRules() { const data = await requestJson('/api/rules'); state.rules = data.rules || []; renderRules(); updateMetrics(); }
+    async function loadMessages() { const data = await requestJson('/api/messages?limit=40'); state.messages = data.messages || []; renderMessages(); updateMetrics(); }
+    function renderRules() { const wrap = document.getElementById('rulesList'); if (!state.rules.length) { wrap.innerHTML = '<div class="empty-state">No hay reglas cargadas todavía.</div>'; return; } wrap.innerHTML = state.rules.map(rule => { const conds = (rule.conditions || []).map(c => `<li><strong>${escapeHtml(c.field_name)}</strong> ${escapeHtml(c.operator)} <strong>${escapeHtml(c.value)}</strong>${c.case_sensitive ? ' (exacto)' : ''}</li>`).join(''); return `<article class="rule-card"><div class="section-title" style="margin-bottom:10px;"><div><h3>${escapeHtml(rule.name)}</h3><div class="small">${escapeHtml(rule.description || '')}</div></div><div class="rule-meta"><span class="pill">Prioridad ${escapeHtml(rule.priority)}</span><span class="pill">${escapeHtml(rule.logic_operator)}</span><span class="pill">${escapeHtml(rule.reply_type)}</span><span class="pill ${Number(rule.enabled) ? 'ok' : 'off'}">${Number(rule.enabled) ? 'Activa' : 'Inactiva'}</span></div></div><div class="small"><strong>Condiciones</strong><ul>${conds || '<li>Sin condiciones</li>'}</ul></div>${rule.reply_type === 'custom' ? `<div class="spaced small"><strong>Respuesta personalizada</strong><div>${escapeHtml(rule.custom_reply || '')}</div></div>` : ''}<div class="spaced mini-actions"><button class="btn btn-soft" type="button" onclick="deleteRule(${rule.id})">Eliminar</button></div></article>`; }).join(''); }
+    function renderMessages() { const wrap = document.getElementById('messagesBox'); if (!state.messages.length) { wrap.innerHTML = '<div class="empty-state">Todavía no hay mensajes para mostrar.</div>'; return; } const rows = state.messages.map(row => { const date = row.created_at ? fmt.format(new Date(row.created_at.replace(' ', 'T'))) : '-'; return `<tr><td>${escapeHtml(date)}</td><td>${escapeHtml(row.direction || '')}</td><td>${escapeHtml(row.contact_name || '')}</td><td>${escapeHtml(row.phone || '')}</td><td>${escapeHtml(row.rule_name || '')}</td><td>${escapeHtml(row.body || '')}</td></tr>`; }).join(''); wrap.innerHTML = `<div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Dirección</th><th>Contacto</th><th>Teléfono</th><th>Regla</th><th>Mensaje</th></tr></thead><tbody>${rows}</tbody></table></div>`; }
+    async function saveConfig() { const payload = { company_name: document.getElementById('company_name').value, fallback_agent: document.getElementById('fallback_agent').value, secretary_name: document.getElementById('secretary_name').value, secretary_personality: document.getElementById('secretary_personality').value, secretary_knowledge: document.getElementById('secretary_knowledge').value, sales_name: document.getElementById('sales_name').value, sales_personality: document.getElementById('sales_personality').value, sales_knowledge: document.getElementById('sales_knowledge').value, support_name: document.getElementById('support_name').value, support_personality: document.getElementById('support_personality').value, support_knowledge: document.getElementById('support_knowledge').value, block_groups: document.getElementById('block_groups').checked, block_newsletters: document.getElementById('block_newsletters').checked, block_status: document.getElementById('block_status').checked, block_from_me: document.getElementById('block_from_me').checked, anti_old_messages: document.getElementById('anti_old_messages').checked, default_reply_enabled: document.getElementById('default_reply_enabled').checked }; const data = await requestJson('/api/config', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) }); document.getElementById('saveMsg').textContent = data.ok ? 'Configuración guardada.' : 'No se pudo guardar.'; if (data.ok) { state.config = data.config || payload; updateHero(); updateMetrics(); } }
+    async function createRule() { const payload = { name: document.getElementById('rule_name').value, description: document.getElementById('rule_description').value, priority: Number(document.getElementById('rule_priority').value || 100), logic_operator: document.getElementById('rule_logic_operator').value, reply_type: document.getElementById('rule_reply_type').value, custom_reply: document.getElementById('rule_custom_reply').value, enabled: document.getElementById('rule_enabled').checked, stop_processing: document.getElementById('rule_stop_processing').checked, conditions: collectConditions() }; if (!payload.name.trim()) { document.getElementById('ruleMsg').textContent = 'Poné un nombre para la regla.'; return; } if (!payload.conditions.length) { document.getElementById('ruleMsg').textContent = 'Agregá al menos una condición.'; return; } const data = await requestJson('/api/rules', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) }); document.getElementById('ruleMsg').textContent = data.ok ? 'Regla guardada.' : 'No se pudo guardar.'; if (data.ok) { document.getElementById('rule_name').value=''; document.getElementById('rule_description').value=''; document.getElementById('rule_priority').value='100'; document.getElementById('rule_logic_operator').value='AND'; document.getElementById('rule_reply_type').value='custom'; document.getElementById('rule_custom_reply').value=''; document.getElementById('rule_enabled').checked=true; document.getElementById('rule_stop_processing').checked=true; document.getElementById('conditionsWrap').innerHTML=''; addCondition(); toggleCustomReplyBox(); await loadRules(); } }
+    async function deleteRule(id) { if (!confirm('Eliminar esta regla?')) return; const data = await requestJson('/api/rules/' + id, { method:'DELETE' }); if (!data.ok) { alert('No se pudo eliminar la regla.'); return; } await loadRules(); }
+    async function restartWhatsapp() { await requestJson('/api/restart-whatsapp', { method:'POST' }); document.getElementById('updatedLine').textContent = 'reinicio solicitado'; setTimeout(loadAll, 3500); }
+    async function resetSession() { await requestJson('/api/reset-session', { method:'POST' }); document.getElementById('updatedLine').textContent = 'sesión reiniciada'; setTimeout(loadAll, 4500); }
+    async function loadAll() { await Promise.all([loadStatus(),loadConfig(),loadRules(),loadMessages()]); updateHero(); updateMetrics(); }
+    async function boot() { addCondition(); toggleCustomReplyBox(); await loadAll(); setInterval(loadStatus, 7000); setInterval(loadMessages, 12000); setInterval(loadRules, 20000); }
     boot();
   </script>
 </body>
