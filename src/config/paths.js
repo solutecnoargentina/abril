@@ -1,6 +1,8 @@
 const path = require('path');
 
-const ROOT = '/opt/solutecno-whatsapp-pro';
+const ROOT = process.env.SOLUTECNO_ROOT
+  ? path.resolve(process.env.SOLUTECNO_ROOT)
+  : path.resolve(process.cwd());
 const STORAGE = path.join(ROOT, 'storage');
 
 module.exports = {
