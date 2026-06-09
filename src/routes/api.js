@@ -29,16 +29,20 @@ router.get('/qr', (req, res) => {
     <title>QR WhatsApp - Solutecno Argentina</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
-      body { font-family: Arial, sans-serif; background:#111; color:#fff; text-align:center; padding:20px; }
-      img { max-width: 360px; width:100%; background:#fff; padding:15px; border-radius:12px; }
-      .box { max-width:420px; margin:0 auto; background:#1e1e1e; padding:20px; border-radius:16px; }
+      body { font-family: Inter, Arial, sans-serif; background: linear-gradient(180deg,#f5f9ff,#ffffff); color:#071629; text-align:center; padding:24px; }
+      .box { max-width:460px; margin:0 auto; background:#fff; padding:24px; border-radius:24px; border:1px solid #dce8fa; box-shadow:0 18px 50px rgba(7,22,41,.10); }
+      img { max-width: 100%; width: 100%; background:#fff; padding:14px; border-radius:16px; border:1px solid #dce8fa; }
+      h2 { margin:0 0 10px; font-size:28px; }
+      p { color:#637083; line-height:1.6; }
+      a { display:inline-block; margin-top:16px; text-decoration:none; background:#0B63FF; color:#fff; padding:12px 18px; border-radius:999px; font-weight:800; }
     </style>
   </head>
   <body>
     <div class="box">
-      <h2>QR WhatsApp</h2>
-      <p>Escaneá este QR desde el teléfono que va a usar el bot.</p>
+      <h2>QR de WhatsApp</h2>
+      <p>Escaneá este código desde el teléfono que va a usar el bot.</p>
       <img src="${qr}" alt="QR WhatsApp" />
+      <a href="/api/status">Volver al panel</a>
     </div>
   </body>
   </html>`;
@@ -83,8 +87,13 @@ router.delete('/rules/:id', (req, res) => {
 });
 
 router.post('/restart-whatsapp', async (req, res) => {
-  await whatsappService.restart();
+  await whatsappService.restart({ resetSession: !!req.body?.resetSession });
   res.json({ ok: true, message: 'Reinicio solicitado' });
+});
+
+router.post('/reset-session', async (req, res) => {
+  await whatsappService.resetSession();
+  res.json({ ok: true, message: 'Sesión limpia y reinicio solicitado' });
 });
 
 module.exports = router;
