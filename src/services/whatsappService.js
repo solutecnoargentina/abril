@@ -27,6 +27,9 @@ class WhatsAppService {
     this.isReady = false;
     this.clientInfo = null;
     this.bootUnix = Math.floor(Date.now() / 1000);
+    this.seenMessageIds = new Set();
+    this.seenMessageQueue = [];
+    this.maxSeenMessages = 2000;
   }
 
   getState() {
@@ -41,8 +44,35 @@ class WhatsAppService {
     return this.currentQrDataUrl;
   }
 
-  isAllowedPrivateChat(chatIdServer) {
-    return true;
+  rememberMessage(messageId) {
+    if (!messageId) return false;
+    if (this.seenMessageIds.has(messageId)) return true;
+
+    this.seenMessageIds.add(messageId);
+    this.seenMessageQueue.push(messageId);
+
+    while (this.seenMessageQueue.length > this.maxSeenMessages) {
+      const expired = this.seenMessageQueue.shift();
+      if (expired) {
+        this.seenMessageIds.delete(expired);
+      }
+    }
+
+    return false;
+  }
+
+  shouldProcessChat(chat, cfg) {
+    const chatId = String(chat?.id?._serialized || '').toLowerCase();
+    const server = String(chat?.id?.server || '').toLowerCase();
+    const isGroup = !!chat?.isGroup || server === 'g.us';
+    const isStatus = chatId === 'status@broadcast' || server === 'status' || server === 'broadcast';
+    const isNewsletter = server === 'newsletter' || chatId.includes('newsletter');
+
+    if (isGroup) return !cfg.block_groups;
+    if (isStatus) return !cfg.block_status;
+    if (isNewsletter) return !cfg.block_newsletters;
+
+    return server === 'c.us' || chatId.endsWith('@c.us');
   }
 
   async refreshQr(qr) {
@@ -102,9 +132,12 @@ class WhatsAppService {
 
     this.client.on('message', async (msg) => {
       try {
+        const messageId = String(msg?.id?._serialized || msg?.id?.id || '');
+        if (this.rememberMessage(messageId)) return;
+
         const cfg = getConfig();
 
-        if (cfg.block_from_me && msg.fromMe) return;
+        if (msg.fromMe) return;
 
         if (cfg.anti_old_messages) {
           const msgUnix = Number(msg.timestamp || 0);
@@ -112,18 +145,9 @@ class WhatsAppService {
         }
 
         const chat = await msg.getChat();
+        if (!this.shouldProcessChat(chat, cfg)) return;
+
         const contact = await msg.getContact();
-
-        const server = chat?.id?.server || '';
-        if (!this.isAllowedPrivateChat(server)) {
-          if (cfg.block_groups && chat?.isGroup) return;
-          if (cfg.block_newsletters && server === 'newsletter') return;
-          if (cfg.block_status && server === 'status') return;
-          return;
-        }
-
-        if (cfg.block_groups && chat?.isGroup) return;
-
         const body = String(msg.body || '').trim();
         const phone = String(contact?.number || '').trim();
         const contactName = contact?.pushname || contact?.name || '';
