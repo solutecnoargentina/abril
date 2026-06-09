@@ -1,6 +1,12 @@
+const fs = require('fs');
 const db = require('./database');
+const paths = require('../config/paths');
 
 function initDatabase() {
+  fs.mkdirSync(paths.STORAGE, { recursive: true });
+  fs.mkdirSync(paths.LOG_DIR, { recursive: true });
+  fs.mkdirSync(paths.SESSION_DIR, { recursive: true });
+
   db.exec(`
     CREATE TABLE IF NOT EXISTS app_config (
       id INTEGER PRIMARY KEY CHECK (id = 1),
